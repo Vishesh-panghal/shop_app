@@ -1,43 +1,52 @@
 import 'package:flutter/material.dart';
-import '../screens/deatail_product.dart';
+import 'package:flutter_complete_guide/providers/product.dart';
+import '../screens/detail_product.dart';
+import 'package:provider/provider.dart';
 
 class ProductItem extends StatelessWidget {
-  final String id;
-  final String title;
-  final String imageUrl;
+  // final String id;
+  // final String title;
+  // final String imageUrl;
 
-  ProductItem(
-    this.id,
-    this.title,
-    this.imageUrl,
-  );
+  // ProductItem(
+  //   this.id,
+  //   this.title,
+  //   this.imageUrl,
+  // );
 
   @override
   Widget build(BuildContext context) {
-    return GridTile(
-      child: GestureDetector(
-        onTap: () {
-          Navigator.of(context).pushNamed(
-            ProductDetailScreen.routeName,
-            arguments: id,
-          );
-        },
-        child: Image.network(
-          imageUrl,
-          fit: BoxFit.cover,
+    final product = Provider.of<Product>(context, listen: false);
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(12),
+      child: GridTile(
+        child: GestureDetector(
+          onTap: () {
+            Navigator.of(context).pushNamed(
+              ProductDetailScreen.routeName,
+              arguments: product.id,
+            );
+          },
+          child: Image.network(
+            product.imageUrl,
+            fit: BoxFit.cover,
+          ),
         ),
-      ),
-      footer: ClipRRect(
-        borderRadius: BorderRadius.circular(12),
-        child: GridTileBar(
+        footer: GridTileBar(
           backgroundColor: Colors.black45,
-          leading: IconButton(
-            icon: Icon(Icons.favorite),
-            onPressed: () {},
-            color: Theme.of(context).colorScheme.secondary,
+          leading: Consumer<Product>(
+            builder: (context, product, _) => IconButton(
+              icon: Icon(
+                  product.isFavorite ? Icons.favorite : Icons.favorite_border),
+              onPressed: () {
+                product.toggleFav();
+              },
+              // color: Theme.of(context).colorScheme.secondary,
+              color: Colors.red,
+            ),
           ),
           title: Text(
-            title,
+            product.title,
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             textAlign: TextAlign.center,
           ),
